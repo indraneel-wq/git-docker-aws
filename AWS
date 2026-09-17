@@ -44,24 +44,23 @@ In S3, Click on the Bucket name->Properties->Scroll down->Event
 notifications will show our Lambda event
 
 code:
-# Create an event notification for S3 upploads
-# Write the names of files uploaded to an S3 bucket to CloudWatch Logs
-import json
-import logging
 import boto3
-# Initialize logging
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+import urllib.parse
+
+s3 = boto3.client('s3')
+target_bucket_name = 'YOUR_TARGET_BUCKET_NAME'  # Replace with your target bucket name
+
 def lambda_handler(event, context):
-# Log the raw event
-logger.info("Event: " + json.dumps(event))
-# Process each record within the event
-for record in event['Records']:
-# Extract the bucket name and file key from the event
-bucket_name = record['s3']['bucket']['name']
-file_key = record['s3']['object']['key']
-# Log the bucket name and file key to CloudWatch
-logger.info(f"New file uploaded: {file_key} in bucket {bucket_name}")
+    source_bucket_name = ‘YOUR_SOURCE_BUCKET_NAME’
+    key = urllib.parse.unquote_plus(event['Records'][0]['s3']['object']['key'], encoding='utf-8')
+
+    try:
+        copy_source = {'Bucket': source_bucket_name, 'Key': key}
+        s3.copy(copy_source, target_bucket_name, key)
+        print(f"Successfully copied {key} from {source_bucket_name} to {target_bucket_name}")
+    except Exception as e:
+        print(f"Error copying {key}: {e}")
+        raise e
 
 Go to S3 Bucket and upload 2-3 files
 
