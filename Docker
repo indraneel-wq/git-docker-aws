@@ -1,0 +1,77 @@
+MYSQL:
+sudo docker pull mysql:8.0
+sudo docker run -d \--name mysql-container \-e MYSQL_ROOT_PASSWORD=root123 \-p 3306:3306 \mysql:8.0
+sudo docker exec -it mysql-container mysql -uroot -p
+
+APACHE:
+sudo docker pull httpd:latest
+sudo docker run -d \--name apache-container \-p 8080:80 \httpd:latest
+localhost:8080
+
+NGINX:
+sudo docker pull nginx:latest
+sudo run -d \--name nginx-container \-p 8081:80 \nginx:latest
+localhost:8081
+
+FLASK:
+mkdir flask-app
+cd flask-app
+nano app.py
+in app.py: 
+from flask import Flask
+app=Flask(__name__)
+@app.route("/")
+def home():
+	return "Hello from Flask Docker!"
+if __name__=="__main__":
+	app.run(host="0.0.0.0",port=5000)
+nano requirements.txt
+put: Flask
+nano Dockerfile
+put:
+FROM python:3.11
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+COPY app.py
+EXPOSE 5000
+CMD ["python","app.py"]
+sudo docker build -t flask-app .
+sudo docker run -d \--name flask-container \-p 5000:5000 \flask-app
+localhost:5000
+
+NGINX IMAGE:
+mkdir digital-library
+cd digital-library
+nano index.html
+put:
+<html>
+<body>
+<h1>Digital library service is running</h1>
+</body>
+</html>
+nano Dockerfile
+put:
+FROM nginx:latest
+COPY index.html /usr/share/nginx/html/
+EXPOSE 80
+sudo docker build -t digital-library .
+sudo docker run -d --name digital-library-container -p 8090:80 digital-library
+localhost:8090
+sudo docker exec -it digital-library-container /bin/bash
+cat /usr/share/nginx/html/index.html
+exit
+
+PYTHON IMAGE:
+mkdir python-dir
+cd python-dir
+nano python1.py
+nano Dockerfile
+put:
+FROM python:3.11-slim
+WORKDIR /app
+COPY python1.py .
+CMD["python","python1.py"]
+docker build -t python-dir
+docker run python-dir
+	
