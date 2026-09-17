@@ -1,0 +1,28 @@
+git-github:
+git clone :- git clone link
+cd repo cloned cd repo
+create file :- touch filename
+add file :- git add .
+git config --global user.name
+git config --global user.email
+commit file :- git commit -m ""
+git push origin main
+
+git checkout -b d1
+git touch filename
+git nano filename
+git add .
+git commit -m ""
+git checkout -b d2
+git touch filename
+git nano filename
+git add .
+git commit -m ""
+remove the conflicts from the file then 
+git add .
+git commit -m "conflict handled"
+git merge d1
+git switch main
+git merge d2
+git branch -d d1
+git branch -d d2 
